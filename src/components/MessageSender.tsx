@@ -6,12 +6,12 @@ import { toast } from "@/hooks/use-toast";
 import { Send } from "lucide-react";
 
 interface MessageSenderProps {
-  serverUrl: string;
+  apiUrl: string;
   apiKey: string;
   isConnected: boolean;
 }
 
-export const MessageSender = ({ serverUrl, apiKey, isConnected }: MessageSenderProps) => {
+export const MessageSender = ({ apiUrl, apiKey, isConnected }: MessageSenderProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -25,10 +25,10 @@ export const MessageSender = ({ serverUrl, apiKey, isConnected }: MessageSenderP
       return;
     }
 
-    if (!serverUrl || !apiKey) {
+    if (!apiKey) {
       toast({
         title: "Error",
-        description: "Configura primero el servidor y la API key",
+        description: "Configura primero la API key",
         variant: "destructive",
       });
       return;
@@ -37,7 +37,7 @@ export const MessageSender = ({ serverUrl, apiKey, isConnected }: MessageSenderP
     setIsSending(true);
 
     try {
-      const response = await fetch(`${serverUrl}/sendMessage`, {
+      const response = await fetch(`${apiUrl}/sendMessage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,8 +50,8 @@ export const MessageSender = ({ serverUrl, apiKey, isConnected }: MessageSenderP
 
       if (response.ok) {
         toast({
-          title: "¡Mensaje enviado!",
-          description: "El mensaje se ha enviado al servidor Python correctamente",
+          title: "✅ Mensaje enviado",
+          description: "Roblox lo recibirá en su próxima consulta",
         });
         setMessage("");
       } else {
@@ -65,7 +65,7 @@ export const MessageSender = ({ serverUrl, apiKey, isConnected }: MessageSenderP
     } catch (error) {
       toast({
         title: "Error de conexión",
-        description: "No se pudo conectar con el servidor. Verifica que esté activo.",
+        description: "No se pudo conectar con la API",
         variant: "destructive",
       });
     } finally {

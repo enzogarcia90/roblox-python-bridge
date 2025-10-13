@@ -1,1 +1,10 @@
 project_id = "gyzusnaidbvoxfrqzbig"
+
+[functions.getMessage]
+verify_jwt = false
+
+[functions.sendMessage]
+verify_jwt = false
+
+[functions.health]
+verify_jwt = false

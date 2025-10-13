@@ -3,25 +3,26 @@ import { Card } from "@/components/ui/card";
 import { ServerConfig } from "@/components/ServerConfig";
 import { MessageSender } from "@/components/MessageSender";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
+import { RobloxScript } from "@/components/RobloxScript";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [serverUrl, setServerUrl] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
   const testConnection = async () => {
-    if (!serverUrl || !apiKey) {
+    if (!apiKey) {
       toast({
         title: "Error",
-        description: "Por favor configura la URL del servidor y la API key",
+        description: "Por favor configura la API key",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      const response = await fetch(`${serverUrl}/health`, {
+      const response = await fetch(`${apiUrl}/health`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -31,14 +32,14 @@ const Index = () => {
       if (response.ok) {
         setIsConnected(true);
         toast({
-          title: "Conexión exitosa",
-          description: "El servidor Python está respondiendo correctamente",
+          title: "✅ API funcionando",
+          description: "La API está activa y lista para recibir mensajes",
         });
       } else {
         setIsConnected(false);
         toast({
           title: "Error de conexión",
-          description: "No se pudo conectar con el servidor",
+          description: "No se pudo conectar con la API",
           variant: "destructive",
         });
       }
@@ -46,7 +47,7 @@ const Index = () => {
       setIsConnected(false);
       toast({
         title: "Error",
-        description: "No se pudo alcanzar el servidor. Verifica la URL y que el servidor esté activo.",
+        description: "No se pudo alcanzar la API",
         variant: "destructive",
       });
     }
@@ -66,9 +67,7 @@ const Index = () => {
 
         <Card className="p-6">
           <ServerConfig
-            serverUrl={serverUrl}
             apiKey={apiKey}
-            onServerUrlChange={setServerUrl}
             onApiKeyChange={setApiKey}
             onTestConnection={testConnection}
           />
@@ -76,11 +75,13 @@ const Index = () => {
 
         <Card className="p-6">
           <MessageSender
-            serverUrl={serverUrl}
+            apiUrl={apiUrl}
             apiKey={apiKey}
             isConnected={isConnected}
           />
         </Card>
+
+        <RobloxScript apiUrl={apiUrl} apiKey={apiKey} />
       </div>
     </div>
   );
