@@ -1,19 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Settings, Copy, Check } from "lucide-react";
+import { Settings, Copy, Check, Save } from "lucide-react";
 import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface ServerConfigProps {
   apiKey: string;
   onApiKeyChange: (key: string) => void;
   onTestConnection: () => void;
+  onSaveApiKey: () => void;
 }
 
 export const ServerConfig = ({
   apiKey,
   onApiKeyChange,
   onTestConnection,
+  onSaveApiKey,
 }: ServerConfigProps) => {
   const [copied, setCopied] = useState(false);
   const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
@@ -51,7 +54,7 @@ export const ServerConfig = ({
         <Label htmlFor="apiKey">API Key</Label>
         <Input
           id="apiKey"
-          type="password"
+          type="text"
           placeholder="Ingresa la API key para Roblox"
           value={apiKey}
           onChange={(e) => onApiKeyChange(e.target.value)}
@@ -61,9 +64,15 @@ export const ServerConfig = ({
         </p>
       </div>
 
-      <Button onClick={onTestConnection} className="w-full">
-        Probar Conexión
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={onSaveApiKey} variant="default" className="flex-1">
+          <Save className="h-4 w-4 mr-2" />
+          Guardar API Key
+        </Button>
+        <Button onClick={onTestConnection} variant="outline" className="flex-1">
+          Probar Conexión
+        </Button>
+      </div>
     </div>
   );
 };

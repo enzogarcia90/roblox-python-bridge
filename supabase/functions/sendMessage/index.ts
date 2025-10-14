@@ -13,10 +13,32 @@ serve(async (req) => {
 
   try {
     const { message, key } = await req.json();
-    const ROBLOX_API_KEY = Deno.env.get("ROBLOX_API_KEY");
+
+    // Crear cliente de Supabase
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Obtener la API key configurada desde la base de datos
+    const { data: config } = await supabase
+      .from("api_config")
+      .select("api_key")
+      .limit(1)
+      .maybeSingle();
+
+    if (!config) {
+      console.error("No API key configured");
+      return new Response(
+        JSON.stringify({ error: "API key not configured" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
 
     // Verificar API key
-    if (key !== ROBLOX_API_KEY) {
+    if (key !== config.api_key) {
       console.error("Invalid API key provided");
       return new Response(
         JSON.stringify({ error: "Invalid API key" }),
@@ -37,11 +59,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Crear cliente de Supabase
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Insertar el mensaje en la base de datos
     const { data, error } = await supabase
