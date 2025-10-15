@@ -84,8 +84,7 @@ serve(async (req) => {
       
       return new Response(
         JSON.stringify({ 
-          message: message.message,
-          key: config.api_key 
+          message: message.message
         }),
         {
           status: 200,
